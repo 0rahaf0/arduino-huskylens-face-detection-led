@@ -1,72 +1,62 @@
 /***************************************************
  HUSKYLENS An Easy-to-use AI Machine Vision Sensor
- <https://www.dfrobot.com/product-1922.html>
- 
- ***************************************************
- This example shows the basic function of library for HUSKYLENS via I2c.
- 
- Created 2020-03-13
- By [Angelo qiao](Angelo.qiao@dfrobot.com)
- 
- GNU Lesser General Public License.
- See <http://www.gnu.org/licenses/> for details.
- All above must be included in any redistribution
- ****************************************************/
+ https://www.dfrobot.com/product-1922.html
+****************************************************/
 
-/Notice and Trouble shooting**************
- 1.Connection and Diagram can be found here
- <https://wiki.dfrobot.com/HUSKYLENS_V1.0_SKU_SEN0305_SEN0336#target_23>
- 2.This code is tested on Arduino Uno, Leonardo, Mega boards.
- ****************************************************/
-
+#include <Wire.h>          // <-- Needed
 #include "HUSKYLENS.h"
 
 HUSKYLENS huskylens;
-//HUSKYLENS green line >> SDA; blue line >> SCL
-void printResult(HUSKYLENSResult result);
 const int led = 7;
 
 void setup() {
-//digitalWrite(led, HIGH);
-    Serial.begin(115200);
-    Wire.begin();
-    while (!huskylens.begin(Wire))
-    {
-        Serial.println(F("Begin failed!"));
-        Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS (General Settings>>Protocol Type>>I2C)"));
-        Serial.println(F("2.Please recheck the connection."));
-        delay(100);
-    }
+  Serial.begin(115200);
+  pinMode(led, OUTPUT);     // <-- Configure LED pin
+  digitalWrite(led, LOW);   // LED off initially
+
+  Wire.begin();
+  while (!huskylens.begin(Wire)) {
+    Serial.println(F("Begin failed!"));
+    Serial.println(F("1. Check Protocol Type: I2C on HuskyLens"));
+    Serial.println(F("2. Check wiring (SDA->A4, SCL->A5 on UNO)"));
+    delay(200);
+  }
 }
 
 void loop() {
-    if (!huskylens.request()) Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
-    else if(!huskylens.isLearned()) 
-      Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
-    else if(!huskylens.available()) 
-      digitalWrite(led,LOW);
+  bool detectedThisCycle = false;
 
-    else
-    {
-        Serial.println(F("###########"));
-        while (huskylens.available())
-        {
-            HUSKYLENSResult result = huskylens.read();
-            printResult(result);
-        }    
-    }
-}
+  if (!huskylens.request()) {
+    Serial.println(F("Request failed, check connection!"));
+  } else if (!huskylens.isLearned()) {
+    Serial.println(F("Nothing learned. Press Learn on HuskyLens."));
+  } else if (huskylens.available()) {
+    Serial.println(F("###########"));
+    while (huskylens.available()) {
+      HUSKYLENSResult result = huskylens.read();
 
-void printResult(HUSKYLENSResult result){
-    if (result.command == COMMAND_RETURN_BLOCK){
-        Serial.println(String()+F("Block:xCenter=")+result.xCenter+F(",yCenter=")+result.yCenter+F(",width=")+result.width+F(",height=")+result.height+F(",ID=")+result.ID);
-        digitalWrite(led, HIGH);
+      if (result.command == COMMAND_RETURN_BLOCK) {
+        Serial.println(String() + F("Block: x=") + result.xCenter +
+                       F(", y=") + result.yCenter +
+                       F(", w=") + result.width +
+                       F(", h=") + result.height +
+                       F(", ID=") + result.ID);
+        detectedThisCycle = true;
+      } else if (result.command == COMMAND_RETURN_ARROW) {
+        Serial.println(String() + F("Arrow: xo=") + result.xOrigin +
+                       F(", yo=") + result.yOrigin +
+                       F(", xt=") + result.xTarget +
+                       F(", yt=") + result.yTarget +
+                       F(", ID=") + result.ID);
+        detectedThisCycle = true;
+      } else {
+        Serial.println(F("Unknown object"));
+      }
     }
-    else if (result.command == COMMAND_RETURN_ARROW){
-        Serial.println(String()+F("Arrow:xOrigin=")+result.xOrigin+F(",yOrigin=")+result.yOrigin+F(",xTarget=")+result.xTarget+F(",yTarget=")+result.yTarget+F(",ID=")+result.ID);
-        digitalWrite(led, HIGH);
-    }
-    else{
-        Serial.println("Object unknown!");
-    }
+  }
+
+  // LED reflects whether anything was detected in this loop
+  digitalWrite(led, detectedThisCycle ? HIGH : LOW);
+
+  delay(30); // small delay to reduce flicker/CPU
 }
