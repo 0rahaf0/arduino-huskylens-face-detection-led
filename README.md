@@ -21,8 +21,8 @@ This project demonstrates how to use an Arduino with a HuskyLens to turn on an L
 4. Ensure that the HuskyLens is set to I2C protocol (General Settings >> Protocol Type >> I2C).
 
 ## Code
-
-The code is provided in the `huskylens_face_detection.ino` file. It allows the Arduino to communicate with the HuskyLens, detect faces, and switch on the LED when a face is detected.
+The full Arduino sketch is here:  
+[`code/huskylens_face_detection_led/huskylens_face_detection_led.ino`](code/huskylens_face_detection_led/huskylens_face_detection_led.ino)
 
 ## Demo
 [🎥 Watch the demo](HuskyLens-led.mp4)
