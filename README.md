@@ -27,6 +27,9 @@ This project demonstrates how to use an Arduino with a HuskyLens to turn on an L
 
 The code is provided in the `huskylens_face_detection.ino` file. It allows the Arduino to communicate with the HuskyLens, detect faces, and switch on the LED when a face is detected.
 
+## Demo
+[🎥 Watch the demo](HuskyLens-led.mp4)
+
 ## Troubleshooting
 
 - Make sure the HuskyLens is connected correctly.
