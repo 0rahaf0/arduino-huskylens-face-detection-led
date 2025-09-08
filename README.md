@@ -12,9 +12,6 @@ This project demonstrates how to use an Arduino with a HuskyLens to turn on an L
 - Jumper wires
 - Breadboard
 
-## Wiring Diagram
-
-[Include a wiring diagram here]
 
 ## Setup
 
