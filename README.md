@@ -22,7 +22,7 @@ This project demonstrates how to use an Arduino with a HuskyLens to turn on an L
 
 ## Code
 The complete Arduino sketch is available here:  
-[View the full code here](code/huskylens_face_detection_led.ino)
+[View the full code here](./code/huskylens_face_detection_led.ino)
 
 ## Demo
 [🎥 Watch the demo](HuskyLens-led.mp4)
